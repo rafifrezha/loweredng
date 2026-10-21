@@ -1,0 +1,1185 @@
+/* Tokens from aston-martin.design.md. Dark only: the system has no light
+   variant and the page floor is a photograph (DESIGN.md, Known Gaps). */
+:root {
+  --gold: #b58c67;
+  --ink-deep: #080b11;
+  --surface-1: #161a21;
+  --surface-3: #3c4049;
+  --muted: #606060;
+  --hairline: #c4c4c4;
+  --hairline-soft: #e5e5e5;
+  --cream: #ffffff;
+  /* Lightest grey that still clears 4.5:1 on surface-1, for placeholders and paths. */
+  --quiet: #9aa0a6;
+
+  /* Display face: Poppins Bold Italic, chosen by RFVNX. Only the 700 italic cut is loaded. */
+  --font-display: 'Poppins', 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: 'Inter Variable', 'Helvetica Neue', Arial, sans-serif;
+
+  --r-none: 0;
+  --r-xs: 2px;
+  --r-pill: 30px;
+
+  --s-xs: 4px;
+  --s-sm: 8px;
+  --s-base: 16px;
+  --s-md: 20px;
+  --s-lg: 25px;
+  --s-xl: 35px;
+  --s-2xl: 45px;
+  --s-3xl: 100px;
+
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--ink-deep);
+  color: var(--cream);
+  font: 400 15px/1.55 var(--font-sans);
+  font-feature-settings: 'tnum' 1;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.container {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 var(--s-base);
+}
+
+@media (min-width: 768px) {
+  .container {
+    padding: 0 var(--s-xl);
+  }
+}
+
+/* Hero: the photograph is the floor. The car sits on the right of the frame
+   and the overcast sky behind the text is bright, so the scrim darkens the
+   left side for contrast and fades out over the car. */
+.hero {
+  --hero-image: var(--hero-sm);
+  /* Second layer darkens the top band so the RFVNX mark stays readable over bright sky. */
+  --hero-scrim:
+    linear-gradient(180deg, rgb(8 11 17 / 0.7) 0, rgb(8 11 17 / 0) 140px),
+    linear-gradient(90deg, rgb(8 11 17 / 0.94) 0%, rgb(8 11 17 / 0.82) 45%, rgb(8 11 17 / 0.25) 100%);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--ink-deep);
+  border-bottom: 1px solid var(--surface-3);
+}
+
+/* The photo lives on its own layer so it can settle without moving the text. */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--hero-scrim), var(--hero-image);
+  background-size: cover;
+  background-position: 70% center;
+}
+
+@media (min-width: 1280px), (min-resolution: 2dppx) and (min-width: 640px) {
+  .hero {
+    --hero-image: var(--hero-lg);
+  }
+}
+
+/* On narrow screens the text covers the car, so the scrim goes uniform. */
+@media (max-width: 767px) {
+  .hero {
+    --hero-scrim: linear-gradient(rgb(8 11 17 / 0.84), rgb(8 11 17 / 0.9));
+  }
+}
+
+/* Entrance, once per page load: the photo settles from a slight zoom while
+   the copy arrives in reading order. CSS animation so it stays smooth while
+   fonts and the bundle are still loading. */
+@keyframes photo-settle {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.hero::before {
+  animation: photo-settle 1400ms var(--ease-out) both;
+}
+
+.hero .wordmark,
+.hero .maker,
+.hero h1,
+.hero .hero-sub,
+.hero .dropzone {
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.hero h1 { animation-delay: 120ms; }
+.hero .hero-sub { animation-delay: 200ms; }
+.hero .dropzone { animation-delay: 280ms; }
+
+.topbar {
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* The maker's mark sits opposite the product name: the tool is loweredNG, RFVNX signs it. */
+.maker {
+  display: block;
+  width: auto;
+  height: 26px;
+}
+
+/* The RFVNX mark links to ko-fi.com/rfvnx. The link pads it out to a 44px tap target. */
+.maker-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--s-xs);
+  margin-right: calc(-1 * var(--s-xs));
+  transition: opacity 200ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .maker-link:hover {
+    opacity: 0.7;
+  }
+}
+
+/* Product wordmark from the logo artwork; sized to sit level with the RFVNX mark. */
+.wordmark {
+  display: block;
+  width: auto;
+  height: 24px;
+}
+
+.hero-body {
+  max-width: 720px;
+  padding: var(--s-2xl) 0 var(--s-3xl);
+}
+
+/* Display stays at weight 300, the one move DESIGN.md asks to keep. */
+h1 {
+  font: italic 700 clamp(30px, 5vw, 44px) / 1.2 var(--font-display);
+  letter-spacing: -0.5px;
+  text-wrap: balance;
+}
+
+.hero-sub {
+  margin-top: var(--s-md);
+  max-width: 52ch;
+  font-size: 16px;
+  color: var(--hairline);
+}
+
+.hero-status {
+  min-height: 24px;
+  margin-top: var(--s-base);
+  color: var(--hairline);
+}
+
+.is-error {
+  color: var(--gold);
+}
+
+/* Dropzone: squared, hairline frame, like the underline input's rule. */
+.dropzone {
+  margin-top: var(--s-xl);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-base);
+  padding: var(--s-lg);
+  border: 1px solid rgb(255 255 255 / 0.4);
+  border-radius: var(--r-none);
+  background: rgb(8 11 17 / 0.55);
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease;
+}
+
+.dropzone.is-over {
+  border-color: var(--cream);
+  background: rgb(255 255 255 / 0.06);
+}
+
+.dropzone.is-loaded {
+  border-style: solid;
+  border-color: var(--surface-3);
+}
+
+.dropzone-title {
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.dropzone-hint {
+  margin-top: var(--s-xs);
+  font-size: 13px;
+  color: var(--hairline);
+}
+
+/* Buttons: the pill is the only rounded shape on the page (binary radius scale). */
+.btn {
+  min-height: 44px;
+  padding: 0 var(--s-md);
+  border-radius: var(--r-pill);
+  font: italic 700 14px/1 var(--font-display);
+  letter-spacing: 0.55px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.btn {
+  transition:
+    background-color 200ms ease,
+    transform 160ms var(--ease-out);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--cream);
+  border: 1px solid var(--cream);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background: rgb(255 255 255 / 0.08);
+}
+
+/* The one filled button: white with ink text, on the action that hands back the result. */
+.btn-primary {
+  background: var(--cream);
+  color: var(--ink-deep);
+  border: 0;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--hairline-soft);
+}
+
+.btn-text {
+  margin-top: var(--s-base);
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--cream);
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--quiet);
+  cursor: pointer;
+}
+
+.btn-text:hover {
+  text-decoration-color: var(--cream);
+}
+
+/* Work area */
+main {
+  padding-bottom: var(--s-3xl);
+}
+
+.block {
+  padding-top: var(--s-3xl);
+}
+
+.block + .block {
+  padding-top: var(--s-2xl);
+  margin-top: var(--s-2xl);
+  border-top: 1px solid var(--surface-3);
+}
+
+h2 {
+  font: 300 32px/1.5 var(--font-sans);
+}
+
+.lead {
+  margin-top: var(--s-sm);
+  max-width: 65ch;
+  color: var(--hairline);
+}
+
+.note,
+.empty {
+  margin-top: var(--s-md);
+  color: var(--hairline);
+}
+
+/* Three notes side by side, each under its own hairline, with real room
+   before the footer. Stacks to one column on phones. */
+.limits {
+  padding-bottom: var(--s-3xl);
+}
+
+.notes {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-lg);
+  margin: var(--s-md) 0 0;
+}
+
+@media (min-width: 768px) {
+  .notes {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--s-xl);
+  }
+}
+
+.note {
+  padding-top: var(--s-base);
+  border-top: 1px solid var(--surface-3);
+}
+
+.note dt {
+  font: italic 700 16px/1.3 var(--font-display);
+  color: var(--cream);
+}
+
+.note dd {
+  margin: var(--s-sm) 0 0;
+  max-width: 40ch;
+  color: var(--hairline);
+}
+
+/* Photos: the close-up is the tall anchor, the coupe closes the row wide.
+   Squared corners, no captions, nothing laid over the images. */
+.photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'wheel wheel'
+    'front rear'
+    'coupe coupe'
+    'promo promo';
+  gap: var(--s-sm);
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--r-none);
+  background: var(--surface-1);
+}
+
+.photo-wheel { grid-area: wheel; aspect-ratio: 4 / 3; object-position: 30% 60%; }
+.photo-front { grid-area: front; aspect-ratio: 1; }
+.photo-rear { grid-area: rear; aspect-ratio: 1; }
+.photo-coupe { grid-area: coupe; aspect-ratio: 16 / 9; object-position: center 75%; }
+
+@media (min-width: 768px) {
+  .photos {
+    grid-template-columns: 1.15fr 1fr 1fr;
+    grid-template-rows: 240px 240px;
+    grid-template-areas:
+      'wheel front rear'
+      'wheel coupe promo';
+  }
+
+  .photo {
+    aspect-ratio: auto;
+  }
+}
+
+/* Wheel-mod tile: sits next to the wheel close-up, the one tile without a
+   photo, so it reads as a panel of the collage rather than an ad banner. */
+.photo-promo {
+  grid-area: promo;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: var(--s-sm);
+  padding: var(--s-lg);
+  background: var(--surface-1);
+  border: 1px solid var(--surface-3);
+  border-radius: var(--r-none);
+}
+
+.photo-promo h2 {
+  font: italic 700 24px/1.2 var(--font-display);
+  letter-spacing: -0.2px;
+}
+
+.photo-promo p {
+  color: var(--hairline);
+  max-width: 32ch;
+}
+
+.photo-promo .btn {
+  display: inline-flex;
+  align-items: center;
+  margin-top: var(--s-sm);
+  text-decoration: none;
+}
+
+/* Ko-fi support button: always in reach, bottom left so it never covers the
+   Download button on the right. Hidden while the intro plays. */
+.kofi-float {
+  position: fixed;
+  left: var(--s-base);
+  bottom: var(--s-base);
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-sm);
+  min-height: 44px;
+  padding: 0 var(--s-md) 0 var(--s-base);
+  background: #000000;
+  color: var(--cream);
+  border: 1px solid var(--surface-3);
+  border-radius: var(--r-pill);
+  font: 600 14px/1 var(--font-sans);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 300ms var(--ease-out),
+    opacity 300ms var(--ease-out),
+    background-color 200ms ease;
+}
+
+.kofi-float img {
+  display: block;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kofi-float:hover {
+    background: var(--surface-1);
+  }
+}
+
+/* Above the sticky download bar (its height is about 77px, 120px when it wraps on phones). */
+.kofi-float.is-raised {
+  transform: translateY(calc(-1 * var(--kofi-lift, 80px)));
+}
+
+@media (max-width: 639px) {
+  .kofi-float.is-raised {
+    --kofi-lift: 124px;
+  }
+}
+
+html.intro-playing .kofi-float {
+  opacity: 0;
+  transform: translateY(12px);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* File list */
+.file-list {
+  list-style: none;
+  margin: var(--s-lg) 0 0;
+  padding: 0;
+}
+
+.file-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--s-base);
+  padding: var(--s-md) 0;
+}
+
+.file-row + .file-row {
+  border-top: 1px solid var(--surface-3);
+}
+
+@media (min-width: 768px) {
+  .file-row {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+}
+
+.file-name {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.file-dir {
+  color: var(--quiet);
+  font-size: 13px;
+}
+
+.file-base {
+  font-weight: 500;
+}
+
+.file-count {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--hairline);
+}
+
+/* Equal-width segments so the thumb can slide by its own width. */
+.segmented {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  min-width: 228px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--surface-3);
+  border-radius: var(--r-none);
+  justify-self: start;
+}
+
+/* Spatial consistency: the selection travels to the new axle instead of jumping. */
+.segmented-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% / 3);
+  height: 100%;
+  background: var(--cream);
+  transform: translateX(calc(var(--active) * 100%));
+  transition: transform 220ms var(--ease-in-out);
+  pointer-events: none;
+}
+
+.segmented label {
+  position: relative;
+}
+
+.segmented span {
+  justify-content: center;
+  transition: color 220ms ease;
+}
+
+.segmented input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.segmented span {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--s-md);
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  color: var(--hairline);
+}
+
+.segmented label + label span {
+  border-left: 1px solid var(--surface-3);
+}
+
+.segmented input:checked + span {
+  color: var(--ink-deep);
+  font-weight: 600;
+}
+
+.segmented input:focus-visible + span {
+  outline: 2px solid var(--cream);
+  outline-offset: 2px;
+}
+
+/* Settings grid: underline inputs, as in the design's text-input. */
+.settings-wrap {
+  margin-top: var(--s-lg);
+}
+
+.settings {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 760px;
+}
+
+.settings th,
+.settings td {
+  padding: var(--s-sm) var(--s-base) var(--s-sm) 0;
+  text-align: left;
+  font-weight: 400;
+}
+
+.settings thead th {
+  font-size: 13px;
+  color: var(--hairline);
+}
+
+.settings tbody th {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.num-input {
+  width: 100%;
+  min-width: 64px;
+  height: 44px;
+  padding: 0 2px;
+  background: transparent;
+  color: var(--cream);
+  border: 0;
+  border-bottom: 1px solid var(--hairline);
+  border-radius: var(--r-xs) var(--r-xs) 0 0;
+  font: inherit;
+  font-size: 16px;
+}
+
+.num-input::placeholder {
+  color: var(--quiet);
+  opacity: 1;
+}
+
+.num-input:focus-visible {
+  outline: none;
+  border-bottom: 2px solid var(--cream);
+  background: rgb(255 255 255 / 0.05);
+}
+
+.num-input[aria-invalid='true'] {
+  border-bottom: 2px solid var(--gold);
+}
+
+.errors p {
+  margin-top: var(--s-sm);
+  color: var(--gold);
+}
+
+@media (max-width: 639px) {
+  .settings,
+  .settings tbody,
+  .settings tr {
+    display: block;
+  }
+
+  .settings thead {
+    display: none;
+  }
+
+  .settings tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--s-base);
+    padding: var(--s-base) 0;
+    border-top: 1px solid var(--surface-3);
+  }
+
+  .settings tbody th {
+    grid-column: 1 / -1;
+  }
+
+  .settings td {
+    display: block;
+    padding: var(--s-sm) 0 0;
+  }
+
+  .settings td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 13px;
+    color: var(--hairline);
+  }
+}
+
+/* Preview */
+.preview-wrap {
+  margin-top: var(--s-lg);
+}
+
+.preview {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.preview th,
+.preview td {
+  padding: var(--s-base) var(--s-base) var(--s-base) 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.preview thead th {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.preview tbody tr + tr td {
+  border-top: 1px solid var(--surface-3);
+}
+
+.preview .num {
+  white-space: nowrap;
+}
+
+.preview tr.is-off td:not(.col-check) {
+  opacity: 0.5;
+}
+
+.col-check {
+  width: 44px;
+}
+
+/* Drawn by hand so every browser shows the same thing: an empty hairline box,
+   then a white box with a black mark when ticked (dash when partly ticked). */
+.col-check input,
+.preview input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 2px 0 0;
+  background: transparent center / 14px 14px no-repeat;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-xs);
+  cursor: pointer;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.preview input[type='checkbox']:checked {
+  background-color: var(--cream);
+  border-color: var(--cream);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M2.5 7.5l3 3 6-7' fill='none' stroke='%23080b11' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.preview input[type='checkbox']:indeterminate {
+  background-color: var(--cream);
+  border-color: var(--cream);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='M3 7h8' fill='none' stroke='%23080b11' stroke-width='2.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+.preview input[type='checkbox']:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.var-name {
+  display: block;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.var-file {
+  display: block;
+  font-size: 13px;
+  color: var(--quiet);
+  overflow-wrap: anywhere;
+}
+
+.changed {
+  font-weight: 700;
+}
+
+.dim {
+  color: var(--quiet);
+}
+
+.status {
+  display: block;
+  white-space: nowrap;
+}
+
+.status-warn {
+  color: var(--gold);
+}
+
+.status-same,
+.status-skip {
+  color: var(--hairline);
+}
+
+.status-reason {
+  display: block;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--hairline);
+  max-width: 28ch;
+}
+
+@media (max-width: 767px) {
+  .preview,
+  .preview tbody,
+  .preview tr,
+  .preview td {
+    display: block;
+  }
+
+  .preview thead tr {
+    display: flex;
+    align-items: center;
+    gap: var(--s-sm);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .preview thead th {
+    display: none;
+    border: 0;
+  }
+
+  .preview thead th.col-check {
+    display: block;
+  }
+
+  .preview thead tr::after {
+    content: 'Include all';
+    font-size: 13px;
+    color: var(--hairline);
+  }
+
+  .preview tbody tr {
+    display: grid;
+    grid-template-columns: 44px 1fr 1fr;
+    padding: var(--s-base) 0;
+  }
+
+  .preview tbody tr + tr {
+    border-top: 1px solid var(--surface-3);
+  }
+
+  .preview tbody tr + tr td {
+    border-top: 0;
+  }
+
+  .preview td {
+    padding: 0 var(--s-sm) var(--s-sm) 0;
+  }
+
+  .preview td.col-check {
+    grid-row: span 4;
+  }
+
+  .preview td[data-label='Variable'],
+  .preview td[data-label='Status'] {
+    grid-column: 2 / -1;
+  }
+
+  .preview td:not(.col-check):not([data-label='Variable'])::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    color: var(--hairline);
+  }
+
+  .status-reason {
+    max-width: none;
+  }
+}
+
+/* Sticky download bar: the table can run long, so the result stays in reach. */
+.download-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: var(--surface-1);
+  border-top: 1px solid var(--surface-3);
+}
+
+/* State indication: the line tracks JSZip's real progress, then fades once saved. */
+.download-progress {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--cream);
+  transform-origin: left center;
+  transition:
+    transform 120ms linear,
+    opacity 400ms ease 600ms;
+}
+
+.download-progress.is-done {
+  opacity: 0;
+}
+
+.download-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--s-base);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-base);
+}
+
+@media (min-width: 768px) {
+  .download-inner {
+    padding: var(--s-base) var(--s-xl);
+  }
+}
+
+.download-msg {
+  flex: 1 1 260px;
+  color: var(--hairline);
+}
+
+.download-msg.is-error {
+  color: var(--gold);
+}
+
+/* Brand intro (first view per session). Same ink-deep floor as the page, so
+   the lift reads as a curtain rather than a separate loading screen. */
+html.intro-playing {
+  overflow: hidden;
+}
+
+/* The hero's own entrance waits until the curtain starts lifting. */
+html.intro-playing .hero::before,
+html.intro-playing .hero .wordmark,
+html.intro-playing .hero .maker,
+html.intro-playing .hero h1,
+html.intro-playing .hero .hero-sub,
+html.intro-playing .hero .dropzone {
+  animation-play-state: paused;
+}
+
+/* The curtain is taller than the screen: the extra --intro-feather below the
+   fold fades to transparent, so when it lifts, its trailing edge is a soft
+   gradient over the page instead of a hard black line. Eased stops avoid a
+   visible band where the fade starts. */
+.intro {
+  --intro-feather: 40dvh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: calc(100dvh + var(--intro-feather));
+  background: var(--ink-deep);
+  cursor: pointer;
+  --intro-mask: linear-gradient(
+    to bottom,
+    #000 0,
+    #000 calc(100% - var(--intro-feather)),
+    rgb(0 0 0 / 0.82) calc(100% - var(--intro-feather) * 0.8),
+    rgb(0 0 0 / 0.55) calc(100% - var(--intro-feather) * 0.6),
+    rgb(0 0 0 / 0.28) calc(100% - var(--intro-feather) * 0.4),
+    rgb(0 0 0 / 0.09) calc(100% - var(--intro-feather) * 0.2),
+    transparent 100%
+  );
+  -webkit-mask-image: var(--intro-mask);
+  mask-image: var(--intro-mask);
+}
+
+.intro-stage {
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--s-base);
+}
+
+.intro-logo {
+  width: min(440px, 78vw);
+}
+
+.intro-logo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 0.0319 is the gap between wheel and wordmark in the source artwork, relative to its width. */
+.intro-wordmark {
+  margin-top: 3.19%;
+}
+
+/* The wheel rolls in from the left and settles: a nod to what the tool does. */
+@keyframes intro-roll {
+  from { opacity: 0; transform: translateX(-48px) rotate(-8deg) scale(0.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes intro-wipe {
+  from { clip-path: inset(0 100% 0 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes intro-lift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-100%); }
+}
+
+@keyframes intro-logo-out {
+  to { opacity: 0; transform: translateY(-24px); }
+}
+
+/* Timeline (1.5s): roll 0-550ms, wipe 200-650ms, hold, lift 850-1500ms. */
+.intro-emblem {
+  animation: intro-roll 550ms var(--ease-out) both;
+}
+
+.intro-wordmark {
+  animation: intro-wipe 450ms var(--ease-out) 200ms both;
+}
+
+.intro.is-leaving {
+  animation: intro-lift 650ms var(--ease-in-out) both;
+}
+
+.intro.is-leaving .intro-logo {
+  animation: intro-logo-out 250ms var(--ease-out) both;
+}
+
+/* After a zip is read, the work sections arrive in the order they are used. */
+.work {
+  animation: rise 450ms var(--ease-out) both;
+}
+
+.work:nth-child(2) { animation-delay: 70ms; }
+.work:nth-child(3) { animation-delay: 140ms; }
+
+/* The bar comes up from the edge it stays docked to. */
+.download-bar {
+  animation: dock 300ms var(--ease-out) both;
+}
+
+@keyframes dock {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.hero-status p,
+.errors p {
+  animation: fade 200ms ease both;
+}
+
+/* Photos wipe up once as they scroll into view (marketing part of the page, seen rarely). */
+.photos .photo {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 900ms var(--ease-out);
+}
+
+.photos.is-in .photo {
+  clip-path: inset(0 0 0 0);
+}
+
+.photos.is-in .photo-front { transition-delay: 80ms; }
+.photos.is-in .photo-rear { transition-delay: 160ms; }
+.photos.is-in .photo-coupe { transition-delay: 240ms; }
+
+.credit {
+  display: flex;
+  align-items: center;
+  gap: var(--s-sm);
+}
+
+.credit img {
+  display: block;
+  width: auto;
+  height: 20px;
+}
+
+.footer {
+  padding: var(--s-xl) 0;
+  /* Room for the floating Ko-fi button so it never sits on the credit. */
+  padding-bottom: calc(var(--s-xl) + 64px);
+  font-size: 13px;
+  color: var(--hairline);
+  border-top: 1px solid var(--surface-3);
+}
+
+/* Reduced motion: keep the fades that explain what appeared, drop all movement. */
+@media (prefers-reduced-motion: reduce) {
+  .kofi-float {
+    transition: opacity 200ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::before,
+  .hero .wordmark,
+  .hero .maker,
+  .hero h1,
+  .hero .hero-sub,
+  .hero .dropzone,
+  .work,
+  .download-bar {
+    animation: fade 200ms ease both;
+    animation-delay: 0ms;
+  }
+
+  .photos .photo {
+    clip-path: none;
+    transition: none;
+  }
+
+  .intro-emblem,
+  .intro-wordmark {
+    animation: fade 300ms ease both;
+  }
+
+  .intro.is-leaving {
+    animation: fade 300ms ease reverse both;
+  }
+
+  .intro.is-leaving .intro-logo {
+    animation: none;
+  }
+
+  .segmented-thumb,
+  .btn {
+    transition: none;
+  }
+
+  .btn:active:not(:disabled) {
+    transform: none;
+  }
+}
